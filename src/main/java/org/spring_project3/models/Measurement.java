@@ -32,6 +32,7 @@ public class Measurement {
     private LocalDateTime measureAt;
 
     @ManyToOne
+    @NotNull
     @JoinColumn(name = "sensor_id", referencedColumnName = "id")
     private Sensor sensor;
 
