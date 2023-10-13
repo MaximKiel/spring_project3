@@ -7,18 +7,22 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Service
 @Transactional(readOnly = true)
 public class MeasurementsService {
 
     private final MeasurementsRepository measurementsRepository;
+    private final SensorsService sensorsService;
 
     @Autowired
-    public MeasurementsService(MeasurementsRepository measurementsRepository) {
+    public MeasurementsService(MeasurementsRepository measurementsRepository, SensorsService sensorsService) {
         this.measurementsRepository = measurementsRepository;
+        this.sensorsService = sensorsService;
     }
 
     public List<Measurement> findAll() {
@@ -33,8 +37,19 @@ public class MeasurementsService {
         return measurementsRepository.findById(id).map(Measurement::getSensor).orElse(null);
     }
 
+    public int getRainyDaysCount() {
+        AtomicInteger count = new AtomicInteger();
+        findAll().forEach(measurement -> {
+            if (measurement.isRaining()) {
+                count.getAndIncrement();
+            }
+        });
+        return count.get();
+    }
+
     @Transactional
     public void save(Measurement measurement) {
+        enrichMeasurement(measurement);
         measurementsRepository.save(measurement);
     }
 
@@ -49,5 +64,10 @@ public class MeasurementsService {
     @Transactional
     public void delete(int id) {
         measurementsRepository.deleteById(id);
+    }
+
+    private void enrichMeasurement(Measurement measurement) {
+        measurement.setMeasureAt(LocalDateTime.now());
+        measurement.setSensor(sensorsService.findByName(measurement.getSensor().getName()).orElse(null));
     }
 }
