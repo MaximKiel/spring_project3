@@ -5,11 +5,12 @@ import org.modelmapper.ModelMapper;
 import org.spring_project3.dto.MeasurementDTO;
 import org.spring_project3.models.Measurement;
 import org.spring_project3.services.MeasurementsService;
-import org.spring_project3.util.MeasurementNotAddException;
+import org.spring_project3.util.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,11 +22,13 @@ public class MeasurementsController {
 
     private final MeasurementsService measurementsService;
     private final ModelMapper modelMapper;
+    private final MeasurementValidator measurementValidator;
 
     @Autowired
-    public MeasurementsController(MeasurementsService measurementsService, ModelMapper modelMapper) {
+    public MeasurementsController(MeasurementsService measurementsService, ModelMapper modelMapper, MeasurementValidator measurementValidator) {
         this.measurementsService = measurementsService;
         this.modelMapper = modelMapper;
+        this.measurementValidator = measurementValidator;
     }
 
     @GetMapping
@@ -43,12 +46,25 @@ public class MeasurementsController {
     public ResponseEntity<HttpStatus> add(@RequestBody @Valid MeasurementDTO measurementDTO,
                                           BindingResult bindingResult) {
 
+        measurementValidator.validate(measurementDTO, bindingResult);
+
         if (bindingResult.hasErrors()) {
-            throw new MeasurementNotAddException(bindingResult.toString());
+            StringBuilder errorMessage = new StringBuilder();
+            List<FieldError> errors = bindingResult.getFieldErrors();
+            for (FieldError error : errors) {
+                errorMessage.append(error.getField()).append(" - ").append(error.getDefaultMessage()).append(";");
+            }
+            throw new MeasurementNotAddException(errorMessage.toString());
         }
 
         measurementsService.save(convertToMeasurement(measurementDTO));
         return ResponseEntity.ok(HttpStatus.OK);
+    }
+
+    @ExceptionHandler
+    private ResponseEntity<MeasurementErrorResponse> handleException(MeasurementErrorResponse e) {
+        MeasurementErrorResponse response = new MeasurementErrorResponse(e.getMassage(), System.currentTimeMillis());
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
     private MeasurementDTO convertToMeasurementDTO(Measurement measurement) {
