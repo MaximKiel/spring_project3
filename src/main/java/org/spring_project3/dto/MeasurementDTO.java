@@ -9,27 +9,27 @@ public class MeasurementDTO {
     @NotNull
     @Min(value = -100, message = "Value should be more than -100")
     @Max(value = 100, message = "Value should be less than 100")
-    private double value;
+    private Double value;
 
     @NotNull
-    private boolean raining;
+    private Boolean raining;
 
     @NotNull
     private SensorDTO sensor;
 
-    public double getValue() {
+    public Double getValue() {
         return value;
     }
 
-    public void setValue(double value) {
+    public void setValue(Double value) {
         this.value = value;
     }
 
-    public boolean isRaining() {
+    public Boolean isRaining() {
         return raining;
     }
 
-    public void setRaining(boolean raining) {
+    public void setRaining(Boolean raining) {
         this.raining = raining;
     }
 

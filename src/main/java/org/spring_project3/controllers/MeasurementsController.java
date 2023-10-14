@@ -62,8 +62,8 @@ public class MeasurementsController {
     }
 
     @ExceptionHandler
-    private ResponseEntity<MeasurementErrorResponse> handleException(MeasurementErrorResponse e) {
-        MeasurementErrorResponse response = new MeasurementErrorResponse(e.getMassage(), System.currentTimeMillis());
+    private ResponseEntity<MeasurementErrorResponse> handleException(MeasurementNotAddException e) {
+        MeasurementErrorResponse response = new MeasurementErrorResponse(e.getMessage(), System.currentTimeMillis());
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
