@@ -5,6 +5,7 @@ import org.modelmapper.ModelMapper;
 import org.spring_project3.dto.MeasurementDTO;
 import org.spring_project3.models.Measurement;
 import org.spring_project3.services.MeasurementsService;
+import org.spring_project3.util.MeasurementNotAddException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -43,8 +44,7 @@ public class MeasurementsController {
                                           BindingResult bindingResult) {
 
         if (bindingResult.hasErrors()) {
-            // TODO create special exception
-            throw new RuntimeException("Measurement registration exception");
+            throw new MeasurementNotAddException(bindingResult.toString());
         }
 
         measurementsService.save(convertToMeasurement(measurementDTO));
