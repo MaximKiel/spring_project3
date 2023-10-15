@@ -14,17 +14,17 @@ public class Measurement {
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Integer id;
 
     @Column(name = "value")
     @NotNull
     @Min(value = -100, message = "Value should be more than -100")
     @Max(value = 100, message = "Value should be less than 100")
-    private double value;
+    private Double value;
 
     @Column(name = "raining")
     @NotNull
-    private boolean raining;
+    private Boolean raining;
 
     @Column(name = "measure_at")
     @NotNull

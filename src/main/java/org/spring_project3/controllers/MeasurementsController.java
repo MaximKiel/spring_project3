@@ -32,8 +32,8 @@ public class MeasurementsController {
     }
 
     @GetMapping
+    //TODO MeasurementResponse
     public List<MeasurementDTO> getMeasurements() {
-        // TODO Fix the bug
         return measurementsService.findAll().stream().map(this::convertToMeasurementDTO).collect(Collectors.toList());
     }
 
