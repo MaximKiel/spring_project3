@@ -37,14 +37,8 @@ public class MeasurementsService {
         return measurementsRepository.findById(id).map(Measurement::getSensor).orElse(null);
     }
 
-    public int getRainyDaysCount() {
-        AtomicInteger count = new AtomicInteger();
-        findAll().forEach(measurement -> {
-            if (measurement.isRaining()) {
-                count.getAndIncrement();
-            }
-        });
-        return count.get();
+    public long getRainyDaysCount() {
+        return findAll().stream().filter(Measurement::isRaining).count();
     }
 
     @Transactional

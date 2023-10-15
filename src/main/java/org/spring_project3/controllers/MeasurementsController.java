@@ -3,6 +3,7 @@ package org.spring_project3.controllers;
 import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.spring_project3.dto.MeasurementDTO;
+import org.spring_project3.dto.MeasurementsResponse;
 import org.spring_project3.models.Measurement;
 import org.spring_project3.services.MeasurementsService;
 import org.spring_project3.util.*;
@@ -32,13 +33,13 @@ public class MeasurementsController {
     }
 
     @GetMapping
-    //TODO MeasurementResponse
-    public List<MeasurementDTO> getMeasurements() {
-        return measurementsService.findAll().stream().map(this::convertToMeasurementDTO).collect(Collectors.toList());
+    public MeasurementsResponse getMeasurements() {
+        return new MeasurementsResponse(measurementsService.findAll().stream().map(this::convertToMeasurementDTO)
+                .collect(Collectors.toList()));
     }
 
     @GetMapping("/rainyDaysCount")
-    public int getRainyDaysCount() {
+    public long getRainyDaysCount() {
         return measurementsService.getRainyDaysCount();
     }
 
