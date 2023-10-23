@@ -1,4 +1,4 @@
-package org.spring_project3.util;
+package org.spring_project3.util.exceptions;
 
 public class SensorNotRegisteredException extends RuntimeException {
 
